@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FutPro Pasto - Guayos Internacionales y Nacionales</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              green: '#10B981',
+              neon: '#22C55E',
+              darkGreen: '#065F46',
+              navy: '#0F172A',
+              accent: '#F97316',
+              surface: '#1E293B'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #10B981; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased custom-scrollbar">
+
+  <!-- TOP ANNOUNCEMENT BAR -->
+  <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white text-xs py-2 px-4 text-center font-medium shadow-md flex justify-between items-center px-6">
+    <span class="hidden sm:inline">⚡ ¡ENVÍOS GRATIS EN PASTO POR COMPRAS SUPERIORES A $100.000! ⚡</span>
+    <span class="w-full sm:w-auto text-center">🚚 Envíos asegurados a todo Colombia desde Nariño</span>
+    <span class="hidden md:inline font-bold">📲 WhatsApp: 320 270 7159</span>
+  </div>
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="sticky top-0 z-40 glass border-b border-slate-800 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- LOGO -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+        <div class="bg-gradient-to-br from-emerald-400 to-green-600 p-2.5 rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center">
+          <i data-lucide="trophy" class="w-7 h-7 text-slate-950 stroke-[2.5]"></i>
+        </div>
+        <div>
+          <span class="text-2xl font-black tracking-tight text-white italic">Fut<span class="text-emerald-400">Pro</span></span>
+          <span class="block text-[10px] text-slate-400 tracking-widest font-semibold uppercase -mt-1">Pasto · Nariño</span>
+        </div>
+      </div>
+
+      <!-- VISIBLE TOP SEARCH BAR -->
+      <div class="flex-1 max-w-xl relative hidden md:block">
+        <div class="relative">
+          <input type="text" id="topSearchInput" oninput="handleSearch(this.value)" placeholder="Buscar marcas (Nike, Adidas...), modelos, suelas (FG, TF)..." class="w-full bg-slate-900/90 text-sm text-slate-100 placeholder-slate-400 pl-10 pr-10 py-2.5 rounded-full border border-slate-700 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-white">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- HEADER ACTIONS -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <button onclick="openAuthModal()" class="flex items-center gap-2 text-slate-300 hover:text-emerald-400 p-2 rounded-xl hover:bg-slate-800/60 transition-all text-xs font-semibold">
+          <i data-lucide="user" class="w-5 h-5 text-emerald-400"></i>
+          <span id="userNameDisplay" class="hidden sm:inline">Cuenta</span>
+        </button>
+
+        <button onclick="openWishlistModal()" class="relative p-2.5 text-slate-300 hover:text-rose-400 rounded-xl hover:bg-slate-800/60 transition-all">
+          <i data-lucide="heart" class="w-5 h-5"></i>
+          <span id="wishlistBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md hidden">0</span>
+        </button>
+
+        <button onclick="toggleCartDrawer()" class="relative bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-slate-950 font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2.5">
+          <i data-lucide="shopping-bag" class="w-5 h-5 stroke-[2.5]"></i>
+          <span class="hidden sm:inline text-xs uppercase tracking-wider font-extrabold">Carrito</span>
+          <span id="cartBadge" class="bg-slate-950 text-emerald-400 text-xs font-black px-2 py-0.5 rounded-full">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE SEARCH BAR -->
+    <div class="px-4 pb-3 md:hidden">
+      <div class="relative">
+        <input type="text" id="mobileSearchInput" oninput="handleSearch(this.value)" placeholder="Buscar guayos, marcas, tallas..." class="w-full bg-slate-900 text-xs text-slate-100 placeholder-slate-400 pl-9 pr-8 py-2 rounded-lg border border-slate-700 focus:outline-none focus:border-emerald-500">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO BANNER -->
+  <section class="relative bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 py-12 px-4 sm:px-6 lg:px-8 border-b border-slate-800/80 overflow-hidden">
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      
+      <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+          <i data-lucide="flame" class="w-4 h-4 text-amber-400 animate-bounce"></i>
+          La casa del futbolista en Pasto
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-none">
+          EQUÍPATE COMO UN <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-green-500 bg-clip-text text-transparent">PROFESIONAL</span>
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
+          Catálogo extenso con más de 20 modelos de guayos internacionales y nacionales. Envíos inmediatos en Pasto y a todo Colombia.
+        </p>
+
+        <!-- CALCULADOR DE ENVÍOS -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 max-w-xl shadow-lg">
+          <div class="flex items-center gap-2 text-xs font-bold text-slate-300 mb-2">
+            <i data-lucide="truck" class="w-4 h-4 text-emerald-400"></i>
+            <span>Calcula el envío a tu ciudad en Colombia:</span>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <select id="heroCitySelect" onchange="updateHeroShippingCost()" class="bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl px-3 py-2 flex-1 focus:border-emerald-500 outline-none">
+              <option value="pasto">Pasto (Urbano) - GRATIS > $100k</option>
+              <option value="narino">Nariño (Ipiales, Tumaco, Tuquerres...)</option>
+              <option value="suroccidente">Suroccidente (Cali, Popayán, Neiva)</option>
+              <option value="centro">Centro (Bogotá, Medellín, Ibagué...)</option>
+              <option value="caribe">Costa Caribe (Barranquilla, Cartagena...)</option>
+              <option value="otras">Otras ciudades / Reexpedición</option>
+            </select>
+            <div id="heroShippingDisplay" class="bg-slate-800 text-emerald-400 font-bold text-xs px-3 py-2 rounded-xl flex items-center justify-center min-w-[120px]">
+              $0 COP (Gratis)
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 justify-center lg:justify-start pt-2">
+          <a href="#catalogo" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-6 py-3 rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+            Explorar Catálogo Extenso <i data-lucide="arrow-down" class="w-4 h-4"></i>
+          </a>
+          <button onclick="scrollToWizard()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-6 py-3 rounded-xl text-sm border border-slate-700 transition-all flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> Test: Encuentra tus Guayos
+          </button>
+        </div>
+      </div>
+
+      <!-- BLACK FRIDAY BANNER -->
+      <div class="lg:col-span-5 bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-900 border-2 border-amber-500/40 rounded-3xl p-6 shadow-2xl relative">
+        <div class="absolute -top-3 right-6 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+          Especial Torneos & Black Friday
+        </div>
+        <h3 class="text-xl font-black text-amber-400 mb-1 flex items-center gap-2">
+          <i data-lucide="zap" class="w-5 h-5 fill-amber-400"></i> OFERTAS DE TEMPORADA
+        </h3>
+        <p class="text-xs text-slate-300 mb-4">Aprovecha descuentos de hasta el 40% en calzado de alta gama.</p>
+
+        <div class="grid grid-cols-4 gap-2 text-center mb-6">
+          <div class="bg-slate-950/80 border border-slate-800 p-2 rounded-xl">
+            <span id="timerHours" class="text-xl font-black text-emerald-400">08</span>
+            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Horas</span>
+          </div>
+          <div class="bg-slate-950/80 border border-slate-800 p-2 rounded-xl">
+            <span id="timerMinutes" class="text-xl font-black text-emerald-400">42</span>
+            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Min</span>
+          </div>
+          <div class="bg-slate-950/80 border border-slate-800 p-2 rounded-xl">
+            <span id="timerSeconds" class="text-xl font-black text-emerald-400">19</span>
+            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Seg</span>
+          </div>
+          <div class="bg-amber-500/20 border border-amber-500/30 p-2 rounded-xl flex flex-col justify-center items-center">
+            <span class="text-xs font-black text-amber-400">-30%</span>
+            <span class="text-[9px] text-amber-300 font-bold uppercase">DCTO</span>
+          </div>
+        </div>
+
+        <button onclick="filterByPromo()" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg">
+          Ver Productos en Oferta
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- OFERTAS DE LA SEMANA -->
+  <section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+          <i data-lucide="tag" class="w-6 h-6 text-emerald-400"></i> OFERTAS DE LA SEMANA
+        </h2>
+        <p class="text-xs text-slate-400">Precios especiales por tiempo limitado con envío rápido a todo Colombia</p>
+      </div>
+      <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Descuentos Activos</span>
+    </div>
+
+    <div id="weeklyDealsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- JS injected -->
+    </div>
+  </section>
+
+  <!-- TEST INTERACTIVO: ENCUENTRA TUS GUAYOS -->
+  <section id="wizardSection" class="py-12 bg-slate-900/60 border-y border-slate-800/80 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div class="text-center max-w-xl mx-auto mb-8">
+        <span class="text-emerald-400 text-xs font-bold uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Asistente Inteligente</span>
+        <h2 class="text-3xl font-black text-white mt-2">Encuentra tus Guayos Ideales</h2>
+        <p class="text-xs text-slate-300 mt-1">Responde 4 preguntas rápidas para recomendarte los pares perfectos según tu juego y presupuesto.</p>
+      </div>
+
+      <div id="wizardStepContainer" class="space-y-6">
+        <!-- JS injected -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO PRINCIPAL -->
+  <section id="catalogo" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div>
+        <h2 class="text-3xl font-black text-white tracking-tight">CATÁLOGO DE GUAYOS</h2>
+        <p class="text-xs text-slate-400">Explora calzado técnico para cancha sintética, grama natural y fútsal.</p>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-slate-400 font-semibold" id="productCount">Mostrando guayos</span>
+        <button onclick="resetFilters()" class="text-xs text-emerald-400 hover:underline font-bold">Limpiar Filtros</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- SIDEBAR FILTROS -->
+      <aside class="lg:col-span-3 space-y-6 bg-slate-900/80 p-5 rounded-2xl border border-slate-800 h-fit">
+        <h3 class="font-bold text-sm text-slate-200 border-b border-slate-800 pb-3 flex items-center justify-between">
+          <span class="flex items-center gap-2"><i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Filtros Avanzados</span>
+        </h3>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Marca</label>
+          <select id="filterBrand" onchange="applyFilters()" class="w-full bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl p-2.5 focus:border-emerald-500 outline-none">
+            <option value="">Todas las Marcas</option>
+            <option value="Nike">Nike</option>
+            <option value="Adidas">Adidas</option>
+            <option value="Puma">Puma</option>
+            <option value="Mizuno">Mizuno</option>
+            <option value="Nacional">Nacionales (Golty, Croydon...)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Superficie / Suela</label>
+          <select id="filterSurface" onchange="applyFilters()" class="w-full bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl p-2.5 focus:border-emerald-500 outline-none">
+            <option value="">Todas las Superficies</option>
+            <option value="FG">FG - Grama Natural Firme</option>
+            <option value="AG">AG - Grama Sintética</option>
+            <option value="TF">TF - Turf / Sintética Corta</option>
+            <option value="MG">MG - Multi-Grama (FG/AG)</option>
+            <option value="IN">IN - Indoor / Fútsal / Piso</option>
+            <option value="SG">SG - Grama Blanda / Terreno Mójado</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Posición en Campo</label>
+          <select id="filterPosition" onchange="applyFilters()" class="w-full bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl p-2.5 focus:border-emerald-500 outline-none">
+            <option value="">Cualquier Posición</option>
+            <option value="Delantero">Delantero / Extremo</option>
+            <option value="Mediocampista">Mediocampista / Volante</option>
+            <option value="Defensa">Defensa Central / Lateral</option>
+            <option value="Arquero">Arquero / Portero</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Tipo de Jugador</label>
+          <select id="filterAttribute" onchange="applyFilters()" class="w-full bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl p-2.5 focus:border-emerald-500 outline-none">
+            <option value="">Todos los Estilos</option>
+            <option value="Velocidad">Velocidad & Explosividad</option>
+            <option value="Control">Control & Toque de Balón</option>
+            <option value="Potencia">Potencia & Disparo</option>
+            <option value="Comodidad">Comodidad & Ajuste Clásico</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Talla (COL / US)</label>
+          <select id="filterSize" onchange="applyFilters()" class="w-full bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl p-2.5 focus:border-emerald-500 outline-none">
+            <option value="">Todas las Tallas</option>
+            <option value="37">37 COL (7 US)</option>
+            <option value="38">38 COL (7.5 US)</option>
+            <option value="39">39 COL (8 US)</option>
+            <option value="40">40 COL (8.5 US)</option>
+            <option value="41">41 COL (9.5 US)</option>
+            <option value="42">42 COL (10 US)</option>
+            <option value="43">43 COL (11 US)</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Precio Máximo</label>
+            <span id="priceRangeLabel" class="text-xs text-emerald-400 font-bold">$700.000</span>
+          </div>
+          <input type="range" id="filterPrice" min="120000" max="700000" step="20000" value="700000" oninput="updatePriceLabel(this.value); applyFilters()" class="w-full accent-emerald-500 cursor-pointer">
+        </div>
+      </aside>
+
+      <!-- GRID PRODUCTOS -->
+      <main class="lg:col-span-9">
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- JS injected -->
+        </div>
+
+        <div id="noResults" class="hidden text-center py-16 bg-slate-900/50 rounded-2xl border border-slate-800">
+          <i data-lucide="search-x" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
+          <h4 class="text-lg font-bold text-white">No encontramos guayos con esos filtros</h4>
+          <p class="text-xs text-slate-400 mt-1 mb-4">Intenta ajustar tu búsqueda o limpiar los filtros seleccionados.</p>
+          <button onclick="resetFilters()" class="bg-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">
+            Restablecer Filtros
+          </button>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- SOBRE NOSOTROS -->
+  <section class="py-12 bg-slate-900 border-t border-slate-800/80 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      <div class="space-y-4">
+        <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Pasión Nariñense</span>
+        <h2 class="text-3xl font-black text-white">Sobre FutPro Pasto</h2>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          Nacimos en el corazón de Pasto con la misión de equipar a los futbolistas de Nariño con el mejor calzado deportivo del mercado. Entendemos la exigencia de jugar en la altura, en sintéticas húmedas o en el césped del Estadio Libertad.
+        </p>
+        <div class="grid grid-cols-3 gap-4 pt-2">
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+            <span class="text-xl font-black text-emerald-400">100%</span>
+            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Originales</span>
+          </div>
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+            <span class="text-xl font-black text-emerald-400">Pasto</span>
+            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Punto Local</span>
+          </div>
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+            <span class="text-xl font-black text-emerald-400">24h</span>
+            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Despachos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
+        <img src="https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=1000&q=80" alt="Futbolista atándose los guayos" class="w-full h-80 object-cover">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE CONSEJOS Y BLOG PARA FUTBOLISTAS (TOTALMENTE FUNCIONAL) -->
+  <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="text-center max-w-xl mx-auto mb-10">
+      <h2 class="text-3xl font-black text-white">Blog & Consejos para Futbolistas</h2>
+      <p class="text-xs text-slate-400 mt-1">Aprende a cuidar tu calzado y a seleccionar los guayos adecuados para tu nivel.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Artículo 1 -->
+      <article class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+        <div>
+          <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=600&q=80" alt="Guayos en cancha" class="w-full h-44 object-cover">
+          <div class="p-5">
+            <span class="text-[10px] font-extrabold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2.5 py-0.5 rounded-full">Guía de Suelas</span>
+            <h3 class="text-base font-bold text-white mt-2 mb-2">Diferencia entre FG, AG, TF y IN</h3>
+            <p class="text-xs text-slate-300 line-clamp-3">
+              Usar guayos de tacos altos (FG) en cancha sintética puede provocar lesiones graves de rodilla. Conoce qué suela usar según la superficie en Pasto.
+            </p>
+          </div>
+        </div>
+        <div class="p-5 pt-0">
+          <button onclick="openBlogModal(1)" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-2 rounded-xl transition-all">Leer Artículo Completo</button>
+        </div>
+      </article>
+
+      <!-- Artículo 2 -->
+      <article class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+        <div>
+          <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80" alt="Limpieza de guayos" class="w-full h-44 object-cover">
+          <div class="p-5">
+            <span class="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2.5 py-0.5 rounded-full">Mantenimiento</span>
+            <h3 class="text-base font-bold text-white mt-2 mb-2">¿Cómo limpiar tus guayos para que duren años?</h3>
+            <p class="text-xs text-slate-300 line-clamp-3">
+              Nunca laves tus guayos en lavadora ni los seques directamente al sol. Te explicamos el método correcto para cuero sintético y natural.
+            </p>
+          </div>
+        </div>
+        <div class="p-5 pt-0">
+          <button onclick="openBlogModal(2)" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-2 rounded-xl transition-all">Leer Artículo Completo</button>
+        </div>
+      </article>
+
+      <!-- Artículo 3 -->
+      <article class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+        <div>
+          <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80" alt="Nike Mercurial vs Adidas Predator" class="w-full h-44 object-cover">
+          <div class="p-5">
+            <span class="text-[10px] font-extrabold text-blue-400 uppercase tracking-wider bg-blue-500/10 px-2.5 py-0.5 rounded-full">Comparativa</span>
+            <h3 class="text-base font-bold text-white mt-2 mb-2">Mercurial vs Predator: ¿Cuál elegir?</h3>
+            <p class="text-xs text-slate-300 line-clamp-3">
+              Analizamos los dos siluetas más icónicas del fútbol mundial: la ligereza y velocidad de Nike frente al control y golpeo con efecto de Adidas.
+            </p>
+          </div>
+        </div>
+        <div class="p-5 pt-0">
+          <button onclick="openBlogModal(3)" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-2 rounded-xl transition-all">Leer Artículo Completo</button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-800 text-slate-400 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <div class="bg-emerald-500 p-2 rounded-xl"><i data-lucide="trophy" class="w-5 h-5 text-slate-950"></i></div>
+          <span class="text-xl font-black text-white italic">Fut<span class="text-emerald-400">Pro</span></span>
+        </div>
+        <p class="text-xs text-slate-400">Especialistas en calzado de fútbol internacional y nacional en Pasto, Nariño.</p>
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider">Atención al Cliente</h4>
+        <ul class="space-y-2 text-xs">
+          <li>📍 Calle 18 #24-12, Centro, Pasto</li>
+          <li>📲 WhatsApp: 320 270 7159</li>
+          <li>✉️ contacto@futpropasto.com</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider">Guía de Compra</h4>
+        <ul class="space-y-2 text-xs">
+          <li><button onclick="openSizeGuideModal()" class="hover:text-emerald-400">Guía de Tallas (COL / US / CM)</button></li>
+          <li><a href="#catalogo" class="hover:text-emerald-400">Suelas para Sintética (TF/AG)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider">Métodos de Pago</h4>
+        <div class="flex flex-wrap gap-2 text-xs font-bold text-slate-300">
+          <span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded">Nequi</span>
+          <span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded">Daviplata</span>
+          <span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded">PSE</span>
+          <span class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded">Contraentrega</span>
+        </div>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto pt-6 border-t border-slate-900 text-center text-xs text-slate-500">
+      © 2026 FutPro Pasto - Todos los derechos reservados.
+    </div>
+  </footer>
+
+  <!-- CHATBOT -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <button onclick="toggleChatbot()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-slate-950 font-black p-4 rounded-full shadow-2xl flex items-center justify-center transition-all transform hover:scale-110">
+      <i data-lucide="message-square" class="w-6 h-6 stroke-[2.5]"></i>
+    </button>
+    <div id="chatbotWindow" class="hidden absolute bottom-16 right-0 w-80 sm:w-96 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-96">
+      <div class="bg-slate-950 p-3.5 border-b border-slate-800 flex justify-between items-center">
+        <span class="text-xs font-bold text-white">Asistente FutPro</span>
+        <button onclick="toggleChatbot()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div id="chatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 custom-scrollbar text-xs">
+        <div class="bg-slate-800/80 p-3 rounded-2xl rounded-tl-none border border-slate-700/50 text-slate-200">
+          ¡Hola! ⚽ ¿Qué guayos buscas hoy para jugar en Pasto?
+        </div>
+      </div>
+      <div class="p-2 bg-slate-950 border-t border-slate-800 flex gap-2">
+        <input type="text" id="chatInput" onkeypress="if(event.key==='Enter') sendCustomChatMessage()" placeholder="Haz una pregunta..." class="flex-1 bg-slate-900 border border-slate-700 text-xs text-white rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500">
+        <button onclick="sendCustomChatMessage()" class="bg-emerald-500 text-slate-950 font-bold p-2 rounded-xl"><i data-lucide="send" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALES Y DRAWERS -->
+  <div id="productModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full bg-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <div id="productModalContent"></div>
+    </div>
+  </div>
+
+  <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 relative">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <div id="authFormContainer"></div>
+    </div>
+  </div>
+
+  <div id="wishlistModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 relative max-h-[80vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeWishlistModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-black text-white mb-4 flex items-center gap-2"><i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i> Mis Favoritos</h3>
+      <div id="wishlistContainer" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <div id="blogModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative max-h-[85vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeBlogModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full bg-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <div id="blogModalContent"></div>
+    </div>
+  </div>
+
+  <div id="sizeGuideModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 relative">
+      <button onclick="closeSizeGuideModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-black text-white mb-2 flex items-center gap-2">
+        <i data-lucide="ruler" class="w-5 h-5 text-emerald-400"></i> Tabla Equivalente de Tallas
+      </h3>
+      <p class="text-xs text-slate-300 mb-4">Mide tu pie en centímetros (CM) para saber tu talla exacta en Colombia:</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left text-slate-300">
+          <thead class="bg-slate-950 text-emerald-400 uppercase font-bold border-b border-slate-800">
+            <tr><th class="p-2.5">COL</th><th class="p-2.5">US</th><th class="p-2.5">EUR</th><th class="p-2.5">CM</th></tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr><td class="p-2.5 font-bold text-white">37</td><td class="p-2.5">7.0</td><td class="p-2.5">40</td><td class="p-2.5">25.0 cm</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">38</td><td class="p-2.5">7.5</td><td class="p-2.5">40.5</td><td class="p-2.5">25.5 cm</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">39</td><td class="p-2.5">8.0</td><td class="p-2.5">41</td><td class="p-2.5">26.0 cm</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">40</td><td class="p-2.5">8.5</td><td class="p-2.5">42</td><td class="p-2.5">26.5 cm</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">41</td><td class="p-2.5">9.5</td><td class="p-2.5">43</td><td class="p-2.5">27.5 cm</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">42</td><td class="p-2.5">10.0</td><td class="p-2.5">44</td><td class="p-2.5">28.0 cm</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">43</td><td class="p-2.5">11.0</td><td class="p-2.5">45</td><td class="p-2.5">29.0 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT DRAWER -->
+  <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-slate-900 border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+    <div class="p-4 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+      <span class="font-black text-white text-base">Proceso de Compra</span>
+      <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+
+    <div class="grid grid-cols-4 bg-slate-950/60 border-b border-slate-800 text-[10px] font-bold text-center">
+      <div id="stepTab1" class="py-2 text-emerald-400 border-b-2 border-emerald-400">1. Carrito</div>
+      <div id="stepTab2" class="py-2 text-slate-500">2. Envío</div>
+      <div id="stepTab3" class="py-2 text-slate-500">3. Pago</div>
+      <div id="stepTab4" class="py-2 text-slate-500">4. Confirmar</div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+      <div id="checkoutStep1" class="space-y-4">
+        <div id="cartItemsContainer" class="space-y-3"></div>
+        <div id="cartSummary" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+          <div class="flex justify-between text-slate-400"><span>Subtotal:</span><span id="cartSubtotal" class="font-bold text-white">$0</span></div>
+          <div class="flex justify-between text-slate-400"><span>Envío:</span><span id="cartShippingCost" class="font-bold text-emerald-400">Gratis (Pasto)</span></div>
+          <div class="flex justify-between text-base font-black text-white pt-2 border-t border-slate-800"><span>Total:</span><span id="cartTotal" class="text-emerald-400">$0</span></div>
+        </div>
+      </div>
+
+      <div id="checkoutStep2" class="hidden space-y-4">
+        <div><label class="block text-[11px] font-semibold text-slate-300 mb-1">Nombre Completo *</label><input type="text" id="shipName" placeholder="Ej: Carlos Narváez" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded-xl p-2.5 outline-none"></div>
+        <div><label class="block text-[11px] font-semibold text-slate-300 mb-1">Teléfono / WhatsApp *</label><input type="text" id="shipPhone" placeholder="Ej: 320 270 7159" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded-xl p-2.5 outline-none"></div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1">Ciudad Destino *</label>
+          <select id="shipCity" onchange="calculateCheckoutShipping()" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded-xl p-2.5 outline-none">
+            <option value="pasto">Pasto (Urbano Nariño)</option>
+            <option value="narino">Nariño (Ipiales, Tumaco, Túquerres)</option>
+            <option value="suroccidente">Suroccidente (Cali, Popayán)</option>
+            <option value="centro">Centro (Bogotá, Medellín)</option>
+            <option value="caribe">Costa Caribe (Barranquilla)</option>
+            <option value="otras">Otras Ciudades</option>
+          </select>
+        </div>
+        <div><label class="block text-[11px] font-semibold text-slate-300 mb-1">Dirección / Barrio *</label><input type="text" id="shipAddress" placeholder="Ej: Cra 27 # 19-45" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded-xl p-2.5 outline-none"></div>
+      </div>
+
+      <div id="checkoutStep3" class="hidden space-y-3">
+        <label class="flex items-center gap-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer">
+          <input type="radio" name="paymentMethod" value="Nequi" checked class="accent-emerald-500">
+          <span class="text-xs font-bold text-white">Nequi / Daviplata</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer">
+          <input type="radio" name="paymentMethod" value="PSE" class="accent-emerald-500">
+          <span class="text-xs font-bold text-white">PSE (Bancos Colombia)</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer">
+          <input type="radio" name="paymentMethod" value="Contraentrega" class="accent-emerald-500">
+          <span class="text-xs font-bold text-white">Contraentrega (Solo Pasto)</span>
+        </label>
+      </div>
+
+      <div id="checkoutStep4" class="hidden space-y-4">
+        <div id="orderFinalSummary" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs space-y-2"></div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-slate-950 border-t border-slate-800 flex gap-3">
+      <button id="prevStepBtn" onclick="navigateStep(-1)" class="hidden w-1/3 bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl text-xs">Atrás</button>
+      <button id="nextStepBtn" onclick="navigateStep(1)" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase transition-all">Continuar</button>
+    </div>
+  </div>
+
+  <script>
+    // BASE DE DATOS EXTENSA DE PRODUCTOS (20 MODELOS)
+    const PRODUCTS = [
+      { id: 1, name: "Nike Mercurial Vapor 15 Pro", ref: "DJ5603-001", brand: "Nike", price: 349900, originalPrice: 429900, discount: "-18%", surface: "TF", surfaceText: "Sintética (Turf)", position: "Delantero", attribute: "Velocidad", sizes: [38, 39, 40, 41, 42], badge: "Más Vendido", stock: 6, upperMaterial: "Flyknit Ultraliviano", weight: "205g", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80", description: "Unidad Zoom Air en la suela para amortiguación de respuesta rápida en sintética." },
+      { id: 2, name: "Nike Phantom GX II Pro AG", ref: "FJ2556-400", brand: "Nike", price: 389900, originalPrice: 459900, discount: "-15%", surface: "AG", surfaceText: "Grama Sintética", position: "Defensa", attribute: "Potencia", sizes: [39, 40, 41, 42], badge: "Destacado", stock: 5, upperMaterial: "Nike Gripknit", weight: "225g", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=80", description: "Malla Gripknit adherente para control impecable bajo la lluvia." },
+      { id: 3, name: "Nike Tiempo Legend 10 Elite FG", ref: "DV4328-100", brand: "Nike", price: 529900, originalPrice: 629900, discount: "-16%", surface: "FG", surfaceText: "Grama Natural", position: "Defensa", attribute: "Control", sizes: [39, 40, 41, 42, 43], badge: "Elite", stock: 4, upperMaterial: "Piel FlyTouch Plus", weight: "215g", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80", description: "Suave y no absorbe agua en partidos lluviosos." },
+      { id: 4, name: "Nike Streetgato Fútsal IC", ref: "DC8466-010", brand: "Nike", price: 279900, originalPrice: 329900, discount: "-15%", surface: "IN", surfaceText: "Fútsal / Piso", position: "Mediocampista", attribute: "Control", sizes: [38, 39, 40, 41, 42], badge: "Fútsal Pro", stock: 7, upperMaterial: "Gamuza y Malla", weight: "245g", image: "https://images.unsplash.com/photo-1579338559194-a162d19bf842?auto=format&fit=crop&w=800&q=80", description: "Suela de goma para coliseos y cemento." },
+      { id: 5, name: "Nike Superfly 9 Academy FG/MG", ref: "DJ5625-100", brand: "Nike", price: 329900, originalPrice: 399900, discount: "-17%", surface: "MG", surfaceText: "Multi-Grama", position: "Delantero", attribute: "Velocidad", sizes: [38, 39, 40, 41], badge: "Tobillera Dynamic", stock: 5, upperMaterial: "NikeSkin con Tobillera", weight: "220g", image: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=800&q=80", description: "Ajuste tipo media alrededor del tobillo para máxima firmeza." },
+      { id: 6, name: "Nike Premier III SG Soft Ground", ref: "AT5889-010", brand: "Nike", price: 319900, originalPrice: 389900, discount: "-18%", surface: "SG", surfaceText: "Grama Blanda / Barro", position: "Defensa", attribute: "Comodidad", sizes: [40, 41, 42, 43], badge: "Tacos de Aluminio", stock: 3, upperMaterial: "Cuero de Canguro Suave", weight: "250g", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80", description: "Tacos intercambiables para terrenos pesados o mojados." },
+      { id: 7, name: "Adidas Predator Elite FT FG", ref: "IE0005-RED", brand: "Adidas", price: 489900, originalPrice: 589900, discount: "-17%", surface: "FG", surfaceText: "Grama Natural", position: "Mediocampista", attribute: "Control", sizes: [39, 40, 41, 42, 43], badge: "Oferta Top", stock: 4, upperMaterial: "HybridTouch 2.0", weight: "220g", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80", description: "Lengüeta plegable retro y agarre Strikeskin." },
+      { id: 8, name: "Adidas F50 Fast Rebirth TF", ref: "IF1320-F50", brand: "Adidas", price: 369900, originalPrice: 449900, discount: "-18%", surface: "TF", surfaceText: "Cancha Sintética", position: "Delantero", attribute: "Velocidad", sizes: [38, 39, 40, 41, 42], badge: "Últimas Unidades", stock: 2, upperMaterial: "Fibertouch Ultra Delgado", weight: "198g", image: "https://images.unsplash.com/photo-1508100134119-f93388e63d95?auto=format&fit=crop&w=800&q=80", description: "Leyenda de velocidad para arranques explosivos." },
+      { id: 9, name: "Adidas Copa Pure 2.3 TF", ref: "IE4910-WHT", brand: "Adidas", price: 289900, originalPrice: 349900, discount: "-17%", surface: "TF", surfaceText: "Sintética (Turf)", position: "Mediocampista", attribute: "Comodidad", sizes: [38, 39, 40, 41, 42], badge: "Clásico", stock: 8, upperMaterial: "Piel Sintética Acolchada", weight: "235g", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80", description: "Toque suave tradicional y amortiguación EVA." },
+      { id: 10, name: "Adidas X Crazyfast.1 AG", ref: "GY7378-NEO", brand: "Adidas", price: 429900, originalPrice: 519900, discount: "-17%", surface: "AG", surfaceText: "Grama Sintética", position: "Delantero", attribute: "Velocidad", sizes: [39, 40, 41, 42], badge: "Ultra Liviano", stock: 4, upperMaterial: "Aeropacity Speedskin", weight: "180g", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=800&q=80", description: "Chasis semi-transparente de ligereza extrema." },
+      { id: 11, name: "Adidas Deportivo II Fútsal IN", ref: "HP2510-BLK", brand: "Adidas", price: 199900, originalPrice: 249900, discount: "-20%", surface: "IN", surfaceText: "Fútsal / Madera", position: "Defensa", attribute: "Comodidad", sizes: [37, 38, 39, 40, 41, 42], badge: "Económico", stock: 10, upperMaterial: "Sintético Resistente", weight: "250g", image: "https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80", description: "Resistencia duradera para partidos en coliseo." },
+      { id: 12, name: "Puma Future 7 Ultimate FG/AG", ref: "107599-01", brand: "Puma", price: 399900, originalPrice: 499900, discount: "-20%", surface: "AG", surfaceText: "Grama Sintética", position: "Mediocampista", attribute: "Control", sizes: [37, 38, 39, 40, 41], badge: "Nuevo", stock: 8, upperMaterial: "FUZIONFIT360 con PWRTAPE", weight: "210g", image: "https://images.unsplash.com/photo-1562183241-b937e95585b6?auto=format&fit=crop&w=800&q=80", description: "Banda de compresión adaptable a la forma del pie." },
+      { id: 13, name: "Puma Ultra Ultimate Cage TF", ref: "107746-01", brand: "Puma", price: 329900, originalPrice: 399900, discount: "-17%", surface: "TF", surfaceText: "Cancha Sintética", position: "Delantero", attribute: "Velocidad", sizes: [38, 39, 40, 41], badge: "Ultraliviano", stock: 5, upperMaterial: "ULTRAWEAVE Tejido", weight: "185g", image: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=800&q=80", description: "Mapeo tecnológico para velocidad pura." },
+      { id: 14, name: "Puma King Top FG/AG", ref: "105646-01", brand: "Puma", price: 319900, originalPrice: 389900, discount: "-18%", surface: "FG", surfaceText: "Grama Natural", position: "Defensa", attribute: "Comodidad", sizes: [39, 40, 41, 42, 43], badge: "Cuero Leyenda", stock: 4, upperMaterial: "K-Betta Piel Sintética", weight: "240g", image: "https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=800&q=80", description: "Sensación clásica con tecnologías ecológicas." },
+      { id: 15, name: "Mizuno Morelia Neo IV Beta", ref: "P1GA234001", brand: "Mizuno", price: 599900, originalPrice: 699900, discount: "-14%", surface: "FG", surfaceText: "Grama Natural", position: "Delantero", attribute: "Comodidad", sizes: [40, 41, 42], badge: "Gama Alta", stock: 3, upperMaterial: "Cuero Canguro K-Leather", weight: "190g", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80", description: "Hecho en Japón con acabado artesanal impecable." },
+      { id: 16, name: "Mizuno Alpha Select TF", ref: "P1GD236501", brand: "Mizuno", price: 299900, originalPrice: 359900, discount: "-16%", surface: "TF", surfaceText: "Sintética", position: "Delantero", attribute: "Velocidad", sizes: [38, 39, 40, 41, 42], badge: "Pro Sintética", stock: 6, upperMaterial: "Sintético Ligero", weight: "210g", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=80", description: "Tracción cónica veloz para arranques rápidos." },
+      { id: 17, name: "Golty Calcio Pro Turf Nacional", ref: "GL-TURF-2026", brand: "Nacional", price: 189900, originalPrice: 229900, discount: "-17%", surface: "TF", surfaceText: "Cancha Sintética", position: "Defensa", attribute: "Comodidad", sizes: [37, 38, 39, 40, 41, 42, 43], badge: "Calidad Nacional", stock: 15, upperMaterial: "Cuero Sintético Reforzado", weight: "260g", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80", description: "Puntera cosida para máxima durabilidad en Pasto." },
+      { id: 18, name: "Croydon Crack Sintética", ref: "CR-PASTO-01", brand: "Nacional", price: 139900, originalPrice: 169900, discount: "-18%", surface: "TF", surfaceText: "Sintética / Tierra", position: "Arquero", attribute: "Comodidad", sizes: [37, 38, 39, 40, 41, 42], badge: "Económico", stock: 12, upperMaterial: "Sintético Denso", weight: "270g", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=800&q=80", description: "Guayo súper aguantador para uso intensivo diario." },
+      { id: 19, name: "Lotto Solista 200 IX AG", ref: "LT-214589", brand: "Nacional", price: 219900, originalPrice: 279900, discount: "-21%", surface: "AG", surfaceText: "Grama Sintética", position: "Mediocampista", attribute: "Comodidad", sizes: [39, 40, 41, 42], badge: "Oferta", stock: 9, upperMaterial: "Malla 3D Ergonómica", weight: "230g", image: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=800&q=80", description: "Suela con distribución para giros seguros." },
+      { id: 20, name: "Under Armour Magnetico Select TF", ref: "UA-3022626", brand: "Nacional", price: 269900, originalPrice: 329900, discount: "-18%", surface: "TF", surfaceText: "Cancha Sintética", position: "Mediocampista", attribute: "Control", sizes: [38, 39, 40, 41, 42], badge: "Ajuste UA", stock: 6, upperMaterial: "FormTrue 1.0", weight: "235g", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80", description: "Se moldea a la forma del pie desde el primer uso." }
+    ];
+
+    const REVIEWS_DB = {};
+    PRODUCTS.forEach(p => {
+      REVIEWS_DB[p.id] = [
+        { name: "Andrés Narváez (Pasto)", rating: 5, size: `${p.sizes[0]} COL`, fit: "Fiel a la talla", comfort: "Excelente", comment: "Excelente guayo. Muy buena tracción en las canchas sintéticas de Pasto." }
+      ];
+    });
+
+    const SHIPPING_RATES = {
+      pasto: { cost: 0, label: "Gratis (Pasto Urbano > $100k)" },
+      narino: { cost: 9000, label: "$9.000 COP (Nariño)" },
+      suroccidente: { cost: 13500, label: "$13.500 COP (Suroccidente)" },
+      centro: { cost: 16500, label: "$16.500 COP (Centro)" },
+      caribe: { cost: 19500, label: "$19.500 COP (Costa Caribe)" },
+      otras: { cost: 22000, label: "$22.000 COP (Otras Ciudades)" }
+    };
+
+    let cart = [];
+    let wishlist = [];
+    let activeUser = JSON.parse(localStorage.getItem('futpro_user')) || null;
+    let selectedCity = 'pasto';
+    let currentStep = 1;
+    let wizardAnswers = {};
+    let wizardCurrentStep = 0;
+
+    window.onload = function() {
+      lucide.createIcons();
+      renderProducts(PRODUCTS);
+      renderWeeklyDeals();
+      initWizard();
+      updateAuthDisplay();
+      updateHeroShippingCost();
+      startCountdown();
+    };
+
+    function renderProducts(items) {
+      const grid = document.getElementById('productGrid');
+      const noRes = document.getElementById('noResults');
+      document.getElementById('productCount').innerText = `Mostrando ${items.length} modelo(s)`;
+
+      if (items.length === 0) {
+        grid.innerHTML = '';
+        noRes.classList.remove('hidden');
+        return;
+      }
+      noRes.classList.add('hidden');
+
+      grid.innerHTML = items.map(p => {
+        const isFav = wishlist.includes(p.id);
+        return `
+          <div class="bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div class="relative overflow-hidden cursor-pointer" onclick="openProductModal(${p.id})">
+              <img src="${p.image}" alt="${p.name}" class="w-full h-52 object-cover group-hover:scale-105 transition-all duration-500">
+              <div class="absolute top-3 left-3 flex flex-col gap-1">
+                <span class="bg-emerald-500 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase shadow">${p.badge}</span>
+                <span class="bg-slate-950/80 text-amber-400 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-slate-800">${p.surface}</span>
+              </div>
+              <button onclick="event.stopPropagation(); toggleWishlist(${p.id})" class="absolute top-3 right-3 bg-slate-950/80 p-2 rounded-full text-slate-400 hover:text-rose-500 transition-all">
+                <i data-lucide="heart" class="w-4 h-4 ${isFav ? 'text-rose-500 fill-rose-500' : ''}"></i>
+              </button>
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+              <div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+                  <span>${p.brand}</span>
+                  <span>Ref: ${p.ref}</span>
+                </div>
+                <h3 class="font-bold text-white text-base leading-tight cursor-pointer hover:text-emerald-400 transition-all" onclick="openProductModal(${p.id})">${p.name}</h3>
+                <p class="text-[11px] text-slate-400 mt-1">${p.surfaceText}</p>
+              </div>
+
+              <div>
+                <div class="flex items-baseline gap-2 mb-2">
+                  <span class="text-lg font-black text-emerald-400">$${p.price.toLocaleString('es-CO')}</span>
+                  <span class="text-xs text-slate-500 line-through">$${p.originalPrice.toLocaleString('es-CO')}</span>
+                </div>
+
+                <div class="flex gap-2">
+                  <button onclick="openProductModal(${p.id})" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-2 rounded-xl transition-all">
+                    Ver Detalle
+                  </button>
+                  <button onclick="addToCart(${p.id})" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-2 rounded-xl transition-all shadow-md">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 stroke-[2.5]"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function renderWeeklyDeals() {
+      const container = document.getElementById('weeklyDealsContainer');
+      const deals = PRODUCTS.slice(0, 4);
+      container.innerHTML = deals.map(p => `
+        <div class="bg-slate-900 border border-amber-500/30 p-4 rounded-2xl flex items-center gap-4 cursor-pointer hover:border-amber-400 transition-all" onclick="openProductModal(${p.id})">
+          <img src="${p.image}" class="w-20 h-20 object-cover rounded-xl border border-slate-800">
+          <div class="flex-1">
+            <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">${p.discount} DCTO</span>
+            <h4 class="text-xs font-bold text-white mt-1 line-clamp-1">${p.name}</h4>
+            <div class="flex items-baseline gap-1.5 mt-1">
+              <span class="text-sm font-black text-emerald-400">$${p.price.toLocaleString('es-CO')}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openProductModal(id) {
+      const p = PRODUCTS.find(item => item.id === id);
+      if (!p) return;
+
+      const reviews = REVIEWS_DB[p.id] || [];
+
+      document.getElementById('productModalContent').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <img src="${p.image}" class="w-full h-72 object-cover rounded-2xl border border-slate-800 shadow-xl mb-3">
+            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-slate-500 block">Material</span>
+                <span class="font-bold text-white">${p.upperMaterial}</span>
+              </div>
+              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-slate-500 block">Peso</span>
+                <span class="font-bold text-emerald-400">${p.weight}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-emerald-400 font-bold uppercase">${p.brand} · Ref: ${p.ref}</span>
+                <span class="text-xs text-slate-400">Stock: <strong class="text-white">${p.stock} pares</strong></span>
+              </div>
+              <h2 class="text-2xl font-black text-white mt-1">${p.name}</h2>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">${p.description}</p>
+            </div>
+
+            <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-slate-400 line-through">$${p.originalPrice.toLocaleString('es-CO')}</span>
+                <div class="text-2xl font-black text-emerald-400">$${p.price.toLocaleString('es-CO')}</div>
+              </div>
+              <span class="bg-amber-500/20 text-amber-400 text-xs font-extrabold px-3 py-1 rounded-full">${p.discount} DCTO</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-2">Talla Colombiana (COL):</label>
+              <div class="flex flex-wrap gap-2">
+                ${p.sizes.map(s => `
+                  <button type="button" onclick="selectSizeBtn(this, ${s})" class="size-btn bg-slate-950 border border-slate-700 text-xs font-bold text-white px-3.5 py-2 rounded-xl">
+                    ${s} COL
+                  </button>
+                `).join('')}
+              </div>
+              <input type="hidden" id="selectedModalSize" value="${p.sizes[0]}">
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button onclick="addModalToCart(${p.id}, false)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i> Agregar al Carrito
+              </button>
+              <button onclick="addModalToCart(${p.id}, true)" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase flex items-center justify-center gap-2">
+                Comprar Ahora
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-800">
+          <h3 class="text-lg font-black text-white mb-4 flex items-center gap-2">
+            <i data-lucide="star" class="w-5 h-5 text-amber-400 fill-amber-400"></i> Reseñas Verificadas (${reviews.length})
+          </h3>
+          <div class="space-y-3 mb-4">
+            ${reviews.map(r => `
+              <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs space-y-1">
+                <div class="flex justify-between font-bold text-white"><span>${r.name}</span><span class="text-amber-400">★ ${r.rating}.0</span></div>
+                <p class="text-slate-300 italic">"${r.comment}"</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('productModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function selectSizeBtn(btn, size) {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('bg-emerald-500', 'text-slate-950'));
+      btn.classList.add('bg-emerald-500', 'text-slate-950');
+      document.getElementById('selectedModalSize').value = size;
+    }
+
+    function closeProductModal() {
+      document.getElementById('productModal').classList.add('hidden');
+    }
+
+    function handleSearch(val) {
+      const query = val.toLowerCase().trim();
+      document.getElementById('clearSearchBtn').classList.toggle('hidden', query === '');
+      const filtered = PRODUCTS.filter(p => 
+        p.name.toLowerCase().includes(query) ||
+        p.brand.toLowerCase().includes(query) ||
+        p.surface.toLowerCase().includes(query)
+      );
+      renderProducts(filtered);
+    }
+
+    function clearSearch() {
+      document.getElementById('topSearchInput').value = '';
+      document.getElementById('mobileSearchInput').value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      applyFilters();
+    }
+
+    function updatePriceLabel(val) {
+      document.getElementById('priceRangeLabel').innerText = `$${parseInt(val).toLocaleString('es-CO')}`;
+    }
+
+    function applyFilters() {
+      const brand = document.getElementById('filterBrand').value;
+      const surface = document.getElementById('filterSurface').value;
+      const position = document.getElementById('filterPosition').value;
+      const attribute = document.getElementById('filterAttribute').value;
+      const size = document.getElementById('filterSize').value;
+      const maxPrice = parseInt(document.getElementById('filterPrice').value);
+
+      const filtered = PRODUCTS.filter(p => {
+        if (brand && p.brand !== brand && !(brand === 'Nacional' && p.brand === 'Nacional')) return false;
+        if (surface && p.surface !== surface) return false;
+        if (position && p.position !== position) return false;
+        if (attribute && p.attribute !== attribute) return false;
+        if (size && !p.sizes.includes(parseInt(size))) return false;
+        if (p.price > maxPrice) return false;
+        return true;
+      });
+
+      renderProducts(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById('filterBrand').value = '';
+      document.getElementById('filterSurface').value = '';
+      document.getElementById('filterPosition').value = '';
+      document.getElementById('filterAttribute').value = '';
+      document.getElementById('filterSize').value = '';
+      document.getElementById('filterPrice').value = 700000;
+      updatePriceLabel(700000);
+      renderProducts(PRODUCTS);
+    }
+
+    function filterByPromo() {
+      renderProducts(PRODUCTS.filter(p => p.discount));
+      document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    const WIZARD_QUESTIONS = [
+      { q: "1. ¿En qué posición juegas?", key: "pos", options: [{ text: "Delantero / Extremo", val: "Delantero" }, { text: "Mediocampista / Volante", val: "Mediocampista" }, { text: "Defensa", val: "Defensa" }, { text: "Arquero", val: "Arquero" }] },
+      { q: "2. ¿En qué superficie juegas?", key: "surf", options: [{ text: "Cancha Sintética (TF)", val: "TF" }, { text: "Grama Natural (FG)", val: "FG" }, { text: "Grama Sintética (AG)", val: "AG" }, { text: "Fútsal (IN)", val: "IN" }] },
+      { q: "3. ¿Qué buscas principalmente?", key: "attr", options: [{ text: "Velocidad", val: "Velocidad" }, { text: "Control", val: "Control" }, { text: "Potencia", val: "Potencia" }, { text: "Comodidad", val: "Comodidad" }] },
+      { q: "4. Presupuesto aproximado", key: "budget", options: [{ text: "Económico (< $250k)", val: 250000 }, { text: "Gama Media ($250k - $450k)", val: 450000 }, { text: "Gama Alta (> $450k)", val: 1000000 }] }
+    ];
+
+    function initWizard() {
+      wizardCurrentStep = 0;
+      renderWizardStep();
+    }
+
+    function renderWizardStep() {
+      const container = document.getElementById('wizardStepContainer');
+      if (wizardCurrentStep < WIZARD_QUESTIONS.length) {
+        const item = WIZARD_QUESTIONS[wizardCurrentStep];
+        container.innerHTML = `
+          <h3 class="text-lg font-bold text-white mb-4 text-center">${item.q}</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
+            ${item.options.map(opt => `
+              <button onclick="answerWizard('${item.key}', '${opt.val}')" class="bg-slate-950 hover:bg-emerald-500/20 border border-slate-800 p-4 rounded-2xl text-xs font-bold text-slate-200 hover:text-emerald-400 text-left">
+                ${opt.text}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        const matches = PRODUCTS.filter(p => p.surface === wizardAnswers.surf || p.position === wizardAnswers.pos).slice(0, 3);
+        container.innerHTML = `
+          <div class="text-center">
+            <h3 class="text-xl font-black text-white mb-4">Tus 3 Guayos Recomendados:</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              ${matches.map(p => `
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-left">
+                  <img src="${p.image}" class="w-full h-24 object-cover rounded-xl mb-2">
+                  <h4 class="text-xs font-bold text-white line-clamp-1">${p.name}</h4>                   <span class="text-xs text-emerald-400 font-bold block mt-1">$${p.price.toLocaleString('es-CO')}</span>
+                  <button onclick="openProductModal(${p.id})" class="mt-2 bg-emerald-500 text-slate-950 text-[11px] font-bold py-1 rounded-xl w-full">Ver Modelo</button>
+                </div>
+              `).join('')}
+            </div>
+            <button onclick="initWizard()" class="text-xs text-slate-400 underline">Repetir Test</button>
+          </div>
+        `;
+      }
+    }
+
+    function answerWizard(key, val) {
+      wizardAnswers[key] = val;
+      wizardCurrentStep++;
+      renderWizardStep();
+    }
+
+    function scrollToWizard() {
+      document.getElementById('wizardSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleCartDrawer() {
+      document.getElementById('cartDrawer').classList.toggle('translate-x-full');
+      renderCart();
+    }
+
+    function addToCart(id) {
+      const p = PRODUCTS.find(item => item.id === id);
+      if (!p) return;
+      const existing = cart.find(item => item.id === id);
+      if (existing) existing.qty++;
+      else cart.push({ ...p, qty: 1, selectedSize: p.sizes[0] });
+      updateCartBadge();
+      toggleCartDrawer();
+    }
+
+    function addModalToCart(id, directCheckout) {
+      const size = parseInt(document.getElementById('selectedModalSize').value);
+      const p = PRODUCTS.find(item => item.id === id);
+      if (!p) return;
+
+      const existing = cart.find(item => item.id === id && item.selectedSize === size);
+      if (existing) existing.qty++;
+      else cart.push({ ...p, qty: 1, selectedSize: size });
+
+      closeProductModal();
+      updateCartBadge();
+      toggleCartDrawer();
+      if (directCheckout) navigateStep(1);
+    }
+
+    function updateCartBadge() {
+      document.getElementById('cartBadge').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cartItemsContainer');
+      if (cart.length === 0) {
+        container.innerHTML = `<p class="text-center py-8 text-xs text-slate-400">Carrito vacío</p>`;
+        document.getElementById('cartSubtotal').innerText = '$0';
+        document.getElementById('cartTotal').innerText = '$0';
+        return;
+      }
+
+      container.innerHTML = cart.map((item, idx) => `
+        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex items-center gap-3">
+          <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl">
+          <div class="flex-1">
+            <h4 class="text-xs font-bold text-white line-clamp-1">${item.name}</h4>
+            <span class="text-[10px] text-slate-400 block">Talla: ${item.selectedSize} COL</span>
+            <span class="text-xs font-black text-emerald-400">$${item.price.toLocaleString('es-CO')}</span>
+          </div>
+          <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl p-1">
+            <button onclick="changeQty(${idx}, -1)" class="w-5 h-5 text-slate-300 font-bold">-</button>
+            <span class="text-xs font-bold text-white">${item.qty}</span>
+            <button onclick="changeQty(${idx}, 1)" class="w-5 h-5 text-slate-300 font-bold">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const shipCost = SHIPPING_RATES[selectedCity].cost;
+
+      document.getElementById('cartSubtotal').innerText = `$${subtotal.toLocaleString('es-CO')}`;
+      document.getElementById('cartShippingCost').innerText = shipCost === 0 ? 'Gratis (Pasto)' : `$${shipCost.toLocaleString('es-CO')}`;
+      document.getElementById('cartTotal').innerText = `$${(subtotal + shipCost).toLocaleString('es-CO')}`;
+    }
+
+    function changeQty(idx, delta) {
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      updateCartBadge();
+      renderCart();
+    }
+
+    function calculateCheckoutShipping() {
+      selectedCity = document.getElementById('shipCity').value;
+      renderCart();
+    }
+
+    function updateHeroShippingCost() {
+      const city = document.getElementById('heroCitySelect').value;
+      document.getElementById('heroShippingDisplay').innerText = SHIPPING_RATES[city].cost === 0 ? '$0 COP (Gratis)' : SHIPPING_RATES[city].label;
+    }
+
+    function navigateStep(direction) {
+      if (cart.length === 0 && direction > 0) return alert('Agrega un producto al carrito primero.');
+      currentStep += direction;
+      if (currentStep < 1) currentStep = 1;
+      if (currentStep > 4) currentStep = 4;
+
+      document.querySelectorAll('[id^="checkoutStep"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`checkoutStep${currentStep}`).classList.remove('hidden');
+
+      const nextBtn = document.getElementById('nextStepBtn');
+      document.getElementById('prevStepBtn').classList.toggle('hidden', currentStep === 1);
+
+      if (currentStep === 4) {
+        nextBtn.innerText = "Enviar WhatsApp 📲";
+        renderFinalSummary();
+        nextBtn.onclick = function() { sendOrderToWhatsApp(); };
+      } else {
+        nextBtn.innerText = "Continuar";
+        nextBtn.onclick = function() { navigateStep(1); };
+      }
+    }
+
+    function renderFinalSummary() {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const shipCost = SHIPPING_RATES[selectedCity].cost;
+      document.getElementById('orderFinalSummary').innerHTML = `
+        <div class="border-b border-slate-800 pb-2">
+          <span class="text-slate-400 block">Destino: <strong class="text-white">${selectedCity.toUpperCase()}</strong></span>
+        </div>
+        <div class="pt-2">
+          ${cart.map(i => `<div class="text-slate-300">• ${i.qty}x ${i.name} (${i.selectedSize} COL)</div>`).join('')}
+        </div>
+        <div class="pt-2 border-t border-slate-800 flex justify-between font-black text-sm text-emerald-400">
+          <span>Total:</span><span>$${(subtotal + shipCost).toLocaleString('es-CO')}</span>
+        </div>
+      `;
+    }
+
+    function sendOrderToWhatsApp() {
+      const name = document.getElementById('shipName').value || 'Cliente';
+      const address = document.getElementById('shipAddress').value || 'Pasto';
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const shipCost = SHIPPING_RATES[selectedCity].cost;
+
+      let msg = `*NUEVO PEDIDO FUTPRO PASTO* ⚽\n\n*Cliente:* ${name}\n*Dirección:* ${address} (${selectedCity})\n\n*PRODUCTOS:*\n`;
+      cart.forEach(i => { msg += `• ${i.qty}x ${i.name} - Talla ${i.selectedSize} COL\n`; });
+      msg += `\n*TOTAL:* $${(subtotal + shipCost).toLocaleString('es-CO')}`;
+
+      window.open(`https://wa.me/573202707159?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function toggleWishlist(id) {
+      const idx = wishlist.indexOf(id);
+      if (idx > -1) wishlist.splice(idx, 1);
+      else wishlist.push(id);
+      document.getElementById('wishlistBadge').innerText = wishlist.length;
+      document.getElementById('wishlistBadge').classList.toggle('hidden', wishlist.length === 0);
+      applyFilters();
+    }
+
+    function openWishlistModal() {
+      const items = PRODUCTS.filter(p => wishlist.includes(p.id));
+      document.getElementById('wishlistContainer').innerHTML = items.length === 0 ? `<p class="text-xs text-slate-400 text-center py-4">No tienes favoritos.</p>` : items.map(p => `
+        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex justify-between items-center">
+          <span class="text-xs font-bold text-white">${p.name}</span>
+          <button onclick="addToCart(${p.id})" class="bg-emerald-500 text-slate-950 px-3 py-1 rounded-xl text-xs font-bold">Comprar</button>
+        </div>
+      `).join('');
+      document.getElementById('wishlistModal').classList.remove('hidden');
+    }
+
+    function closeWishlistModal() { document.getElementById('wishlistModal').classList.add('hidden'); }
+
+    function openAuthModal() {
+      document.getElementById('authFormContainer').innerHTML = `
+        <h3 class="text-lg font-black text-white mb-3">Cuenta Personal</h3>
+        <input type="text" id="userRegName" placeholder="Tu nombre" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded-xl p-2.5 mb-2 outline-none">
+        <input type="email" id="userRegEmail" placeholder="correo@ejemplo.com" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded-xl p-2.5 mb-3 outline-none">
+        <button onclick="handleLogin()" class="w-full bg-emerald-500 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase">Guardar Sesión</button>
+      `;
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+
+    function handleLogin() {
+      const name = document.getElementById('userRegName').value || 'Usuario';
+      activeUser = { name };
+      localStorage.setItem('futpro_user', JSON.stringify(activeUser));
+      updateAuthDisplay();
+      closeAuthModal();
+    }
+
+    function updateAuthDisplay() {
+      document.getElementById('userNameDisplay').innerText = activeUser ? activeUser.name.split(' ')[0] : 'Cuenta';
+    }
+
+    function toggleChatbot() { document.getElementById('chatbotWindow').classList.toggle('hidden'); }
+
+    function sendCustomChatMessage() {
+      const input = document.getElementById('chatInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      const container = document.getElementById('chatMessages');
+      container.innerHTML += `<div class="bg-emerald-500 text-slate-950 p-2.5 rounded-2xl text-right font-semibold">${val}</div>`;
+      input.value = '';
+
+      setTimeout(() => {
+        container.innerHTML += `<div class="bg-slate-800 p-2.5 rounded-2xl text-slate-200">¡Recibido! Para pedidos o dudas de tallas en Pasto escríbenos al WhatsApp 320 270 7159.</div>`;
+        container.scrollTop = container.scrollHeight;
+      }, 400);
+    }
+
+    // FUNCIONES DETALLADAS DEL BLOG
+    function openBlogModal(id) {
+      const content = document.getElementById('blogModalContent');
+      if (id === 1) {
+        content.innerHTML = `
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Guía Técnica de Suelas</span>
+          <h2 class="text-2xl font-black text-white mt-3 mb-4">¿Qué significa FG, AG, TF e IN y cuál elegir en Pasto?</h2>
+          
+          <div class="space-y-4 text-xs text-slate-300 leading-relaxed">
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <h4 class="font-bold text-emerald-400 text-sm mb-1">🌱 FG (Firm Ground - Grama Natural)</h4>
+              <p>Tacos alargados o cónicos de poliuretano rígido. Diseñados para césped natural seco o húmedo como el Estadio Libertad. <strong>Nota importante:</strong> No los uses en sintética ya que no amortiguan y se entierran demasiado.</p>
+            </div>
+
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <h4 class="font-bold text-emerald-400 text-sm mb-1">⚡ AG (Artificial Grass - Grama Sintética)</h4>
+              <p>Tacos más cortos, redondos y huecos en el centro para liberar presión. Son ideales para canchas sintéticas modernas de césped alto (más de 3 cm).</p>
+            </div>
+
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <h4 class="font-bold text-emerald-400 text-sm mb-1">👟 TF (Turf / Multitaco)</h4>
+              <p>Suela de caucho con decenas de microtacos. La recomendación número 1 para las canchas de fútbol 5 y 8 de Pasto. Brindan agarre seguro sin cargar las rodillas.</p>
+            </div>
+
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <h4 class="font-bold text-emerald-400 text-sm mb-1">🏢 IN (Indoor / Fútsal)</h4>
+              <p>Suela totalmente plana de goma de alta densidad. Diseñada para coliseos, piso de madera o cemento.</p>
+            </div>
+          </div>
+        `;
+      } else if (id === 2) {
+        content.innerHTML = `
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">Mantenimiento de Calzado</span>
+          <h2 class="text-2xl font-black text-white mt-3 mb-4">¿Cómo limpiar tus guayos para que duren más de 2 años?</h2>
+          
+          <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+            <p>El clima húmedo y el caucho abrasivo de las canchas sintéticas en Pasto deterioran el calzado si no se limpia de forma adecuada. Sigue estos 4 pasos:</p>
+
+            <ol class="list-decimal pl-4 space-y-2">
+              <li><strong class="text-white">Cepillado seco:</strong> Espera a que el barro se seque y retíralo con un cepillo suave de cerdas sintéticas.</li>
+              <li><strong class="text-white">Limpieza con trapo húmedo:</strong> Limpia la capellada utilizando agua tibia y jabón líquido neutro. <em>Jamás uses detergentes abrasivos ni blanqueador.</em></li>
+              <li><strong class="text-white">Secado a la sombra:</strong> Extrae las plantillas y coloca papel periódico dentro del guayo para absorber la humedad interna. NUNCA los pongas directo al sol ni detrás de la nevera, ya que el calor cristaliza la pega de la suela.</li>
+              <li><strong class="text-white">Prohibido lavadora:</strong> El ciclo de centrifugado destruye las costuras y ablanda la talonera.</li>
+            </ol>
+          </div>
+        `;
+      } else {
+        content.innerHTML = `
+          <span class="text-xs font-bold text-blue-400 uppercase tracking-widest bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">Comparativa de Modelos</span>
+          <h2 class="text-2xl font-black text-white mt-3 mb-4">Nike Mercurial vs Adidas Predator: ¿Cuál es el adecuado para ti?</h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+              <h4 class="font-bold text-emerald-400 text-sm mb-2">⚡ Nike Mercurial</h4>
+              <ul class="space-y-1.5 text-slate-300">
+                <li>• <strong>Filosofía:</strong> Velocidad explosiva y ligereza pura.</li>
+                <li>• <strong>Horma:</strong> Estrecha y ceñida al pie.</li>
+                <li>• <strong>Peso:</strong> ~190g - 205g.</li>
+                <li>• <strong>Ideal para:</strong> Extremos, delanteros de banda y jugadores veloces.</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+              <h4 class="font-bold text-amber-400 text-sm mb-2">🎯 Adidas Predator</h4>
+              <ul class="space-y-1.5 text-slate-300">
+                <li>• <strong>Filosofía:</strong> Control, precisión y golpeo potente.</li>
+                <li>• <strong>Horma:</strong> Media / Amplia con mayor volumen.</li>
+                <li>• <strong>Peso:</strong> ~220g.</li>
+                <li>• <strong>Ideal para:</strong> Creadores de juego, volantes y cobradores de tiro libre.</li>
+              </ul>
+            </div>
+          </div>
+        `;
+      }
+      document.getElementById('blogModal').classList.remove('hidden');
+    }
+
+    function closeBlogModal() { document.getElementById('blogModal').classList.add('hidden'); }
+    function openSizeGuideModal() { document.getElementById('sizeGuideModal').classList.remove('hidden'); }
+    function closeSizeGuideModal() { document.getElementById('sizeGuideModal').classList.add('hidden'); }
+
+    function startCountdown() {
+      let h = 8, m = 42, s = 19;
+      setInterval(() => {
+        s--; if (s < 0) { s = 59; m--; } if (m < 0) { m = 59; h--; }
+        document.getElementById('timerHours').innerText = String(h).padStart(2, '0');
+        document.getElementById('timerMinutes').innerText = String(m).padStart(2, '0');
+        document.getElementById('timerSeconds').innerText = String(s).padStart(2, '0');
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
